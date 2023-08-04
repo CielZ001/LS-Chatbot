@@ -18,10 +18,10 @@ import os
 # from dotenv import load_dotenv
 # load_dotenv()
 
-OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
-pc_api_key = os.environ['pc_api_key']
-pc_env = os.environ['pc_env']
-pc_index = os.environ['pc_index']
+OPENAI_API_KEY = os.environ['openai.api.key']
+pc_api_key = os.environ['pc.api.key']
+pc_env = os.environ['pc.env']
+pc_index = os.environ['pc.index']
 
 model_name = 'text-embedding-ada-002'
 embed = OpenAIEmbeddings(
