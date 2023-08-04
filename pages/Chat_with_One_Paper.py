@@ -107,7 +107,7 @@ def main():
 
     
     if "selected_option" not in st.session_state or st.session_state.selected_option != selected_option:
-      if len(selected_option) != 0:
+      if selected_option:
           st.session_state.selected_option = selected_option
           # Load the document if the selected option changes
           df = pd.read_excel(xlsx_file_path)
