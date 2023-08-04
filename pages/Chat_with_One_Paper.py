@@ -81,8 +81,8 @@ def remove_duplicates(input_list):
     return list(set(input_list))
 
 
-def get_titles_from_dict(result):
-    return remove_duplicates([doc.metadata.get('title') for doc in result['source_documents']])
+# def get_titles_from_dict(result):
+#     return remove_duplicates([doc.metadata.get('title') for doc in result['source_documents']])
 
 
 def row_to_dict(df, title):
@@ -115,7 +115,8 @@ def main():
             # with st.spinner("Searching for papers..."):
                 # res = qa(text_input)
                 # options = get_titles_from_dict(res)
-            options = search_excel(text_input)
+            d_removed = search_excel(text_input)
+            options = remove_duplicates(d_removed)
             st.session_state.options = options
     else:
         if "options" in st.session_state:
