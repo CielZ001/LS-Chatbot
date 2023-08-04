@@ -103,24 +103,24 @@ def print_answer_citations_sources(result):
 
     return output_answer
 
-
+current_dir = os.path.dirname(os.path.abspath(__file__))
+json_file_path = os.path.join(current_dir, 'convo_history.json')
 
 def get_convo():
-    convo_file = 'convo_history.json'
-    with open(convo_file, 'r', encoding='utf-8') as f:
+    with open(json_file_path, 'r', encoding='utf-8') as f:
         content = f.read()
     print("Content of convo_history.json:", content)  # Add this line for logging
     data = json.loads(content)
-    return data, convo_file
+    return data, json_file_path
 
 
 def store_convo(prompt, answers, citations):
-    data, convo_file = get_convo()
+    data, json_file_path = get_convo()
     current_dateTime = datetime.now()
     data['{}'.format(current_dateTime)] = []
     data['{}'.format(current_dateTime)].append({'Question': prompt, 'Answer': answers, 'Citations': citations})
 
-    with open(convo_file, 'w', encoding='utf-8') as f:
+    with open(json_file_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
