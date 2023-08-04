@@ -41,8 +41,8 @@ pc_index = st.secrets['pc-index']
 
 model_name = 'text-embedding-ada-002'
 
-pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENVIRONMENT)
-index = pinecone.Index(index_name)
+pinecone.init(api_key=pc_api_key, environment=pc_env)
+index = pinecone.Index(pc_index)
 
 embed = OpenAIEmbeddings(model=model_name, openai_api_key=OPENAI_API_KEY)
 vectorstore = Pinecone(index, embed.embed_query, "text")
