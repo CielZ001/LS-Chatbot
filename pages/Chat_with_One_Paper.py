@@ -61,7 +61,7 @@ memory1 = ConversationSummaryBufferMemory(llm=OpenAI(temperature=0, openai_api_k
                                           return_messages=True,
                                           output_key='answer')
 qa = ConversationalRetrievalChain.from_llm(OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY),
-                                           vectorstore.as_retriever(search_kwargs={"k": 10}),
+                                           vectorstore.as_retriever(search_kwargs={"k": 5}),
                                            chain_type="stuff",
                                            memory=memory1,
                                            condense_question_prompt=CONDENSEprompt,
