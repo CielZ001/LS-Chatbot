@@ -87,6 +87,7 @@ def main():
     xlsx_file_path = os.path.join(current_dir, 'r', 'merged_data02.xlsx')
     txt_path =  os.path.join(current_dir, 'r', '1.txt')
 
+    selected_option = []
     text_input = st.text_input("Write a title or topic to start:", value="")
     if "text_input" not in st.session_state or st.session_state.text_input != text_input:
         st.session_state.text_input = text_input
