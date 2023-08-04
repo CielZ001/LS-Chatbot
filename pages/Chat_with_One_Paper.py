@@ -106,19 +106,22 @@ def main():
 
     
     if "selected_option" not in st.session_state or st.session_state.selected_option != selected_option:
-        st.session_state.selected_option = selected_option
-        # Load the document if the selected option changes
-        df = pd.read_excel(xlsx_file_path)
-        df = df.loc[:, ["author", "uri", "title", "text"]]
-        dic = row_to_dict(df, selected_option)
-        if dic is not None:
-            with open(txt_path, 'w', encoding="utf-8") as txt_file:
-                paper = dic['text']
-                txt_file.write(paper)
-            st.session_state.dic = dic
-        else:
-            st.session_state.dic = {}
-            st.warning("No document found for the selected title. Please select a valid title.")
+      if len(selected_option) == 1:
+          st.session_state.selected_option = selected_option
+          # Load the document if the selected option changes
+          df = pd.read_excel(xlsx_file_path)
+          df = df.loc[:, ["author", "uri", "title", "text"]]
+          dic = row_to_dict(df, selected_option)
+          if dic is not None:
+              with open(txt_path, 'w', encoding="utf-8") as txt_file:
+                  paper = dic['text']
+                  txt_file.write(paper)
+              st.session_state.dic = dic
+          else:
+              st.session_state.dic = {}
+              st.warning("No document found for the selected title. Please select a valid title.")
+      else:
+          pass
     else:
         dic = st.session_state.dic
 
