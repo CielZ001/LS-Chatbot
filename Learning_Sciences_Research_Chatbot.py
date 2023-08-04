@@ -130,14 +130,26 @@ def store_convo(prompt, answers, citations):
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
+prompt_template = """Always use following pieces of context to answer the question at the end. You should construct your answer only based on information provided in the context. If you don't know the answer, don't try to make up an answer, just say the exact following "Sorry, I didn't find direct answer to your question. But here are some resources that may be helpful.".
+
+{context}
+
+Question: {question}
+Helpful Answer:"""
+QA_PROMPT_revised = PromptTemplate(
+    template=prompt_template, input_variables=["context", "question"]
+)
+
+
 if prompt := st.chat_input("Ask anything about learning sciences research!"):
     st.session_state.messages.append(ChatMessage(role="user", content=prompt))
     st.chat_message("user").write(prompt)
 
     with st.chat_message("assistant"):
         stream_handler = StreamHandler(st.empty())
-        qa = ConversationalRetrievalChain.from_llm(ChatOpenAI(temperature=0, openai_api_key=OPENAI_API_KEY, streaming=True, callbacks=[stream_handler]),
+        qa = ConversationalRetrievalChain.from_llm(ChatOpenAI(temperature=0, openai_api_key=OPENAI_API_KEY, streaming=True, callbacks=[stream_handler]), 
                                                    vectorstore.as_retriever(), memory=st.session_state.buffer_memory,
+                                                   combine_docs_chain_kwargs={'prompt': QA_PROMPT_revised},
                                                    return_source_documents=True)
         with st.spinner("searching through learning sciences research papers and preparing citations..."):
             res = qa({"question": st.session_state.messages[-1].content})
