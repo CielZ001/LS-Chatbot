@@ -29,10 +29,15 @@ from pydantic import BaseModel, Field
 #    to return the answer to the user's question.
 
 # Set up initial configurations
-OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
-PINECONE_API_KEY = os.environ['pc_api_key']
-PINECONE_ENVIRONMENT = os.environ['pc_env']
-index_name = os.environ['pc_index']
+OPENAI_API_KEY = os.environ['openai.api.key']
+pc_api_key = os.environ['pc.api.key']
+pc_env = os.environ['pc.env']
+pc_index = os.environ['pc.index']
+
+# OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
+# PINECONE_API_KEY = os.environ['pc_api_key']
+# PINECONE_ENVIRONMENT = os.environ['pc_env']
+# index_name = os.environ['pc_index']
 
 model_name = 'text-embedding-ada-002'
 
