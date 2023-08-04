@@ -43,34 +43,34 @@ pc_index = st.secrets['pc-index']
 # PINECONE_ENVIRONMENT = os.environ['pc_env']
 # index_name = os.environ['pc_index']
 
-model_name = 'text-embedding-ada-002'
+# model_name = 'text-embedding-ada-002'
 
-pinecone.init(api_key=pc_api_key, environment=pc_env)
-index = pinecone.Index(pc_index)
+# pinecone.init(api_key=pc_api_key, environment=pc_env)
+# index = pinecone.Index(pc_index)
 
-embed = OpenAIEmbeddings(model=model_name, openai_api_key=OPENAI_API_KEY)
-vectorstore = Pinecone(index, embed.embed_query, "text")
+# embed = OpenAIEmbeddings(model=model_name, openai_api_key=OPENAI_API_KEY)
+# vectorstore = Pinecone(index, embed.embed_query, "text")
 
-CONDENSE_PROMPT = """Given the following conversation and a follow up question, print out the follow up question.
+# CONDENSE_PROMPT = """Given the following conversation and a follow up question, print out the follow up question.
 
-Chat History:
-{chat_history}
-Follow Up Input: {question}
-Follow up question:"""
+# Chat History:
+# {chat_history}
+# Follow Up Input: {question}
+# Follow up question:"""
 
-CONDENSEprompt = PromptTemplate(input_variables=["chat_history", "question"], template=CONDENSE_PROMPT)
-memory1 = ConversationSummaryBufferMemory(llm=OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY),
-                                          max_token_limit=150,
-                                          memory_key='chat_history',
-                                          return_messages=True,
-                                          output_key='answer')
-qa = ConversationalRetrievalChain.from_llm(OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY),
-                                           vectorstore.as_retriever(search_kwargs={"k": 5}),
-                                           chain_type="stuff",
-                                           memory=memory1,
-                                           condense_question_prompt=CONDENSEprompt,
-                                           verbose=True,
-                                           return_source_documents=True)
+# CONDENSEprompt = PromptTemplate(input_variables=["chat_history", "question"], template=CONDENSE_PROMPT)
+# memory1 = ConversationSummaryBufferMemory(llm=OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY),
+#                                           max_token_limit=150,
+#                                           memory_key='chat_history',
+#                                           return_messages=True,
+#                                           output_key='answer')
+# qa = ConversationalRetrievalChain.from_llm(OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY),
+#                                            vectorstore.as_retriever(search_kwargs={"k": 5}),
+#                                            chain_type="stuff",
+#                                            memory=memory1,
+#                                            condense_question_prompt=CONDENSEprompt,
+#                                            verbose=True,
+#                                            return_source_documents=True)
 
 
 class DocumentInput(BaseModel):
