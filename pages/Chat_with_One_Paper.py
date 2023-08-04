@@ -16,6 +16,10 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chat_models import ChatOpenAI
 from pydantic import BaseModel, Field
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+xlsx_file_path = os.path.join(current_dir, 'r', 'merged_data02.xlsx')
+txt_path =  os.path.join(current_dir, 'r', '1.txt')
+
 # Logic of this code:
 #
 # 1. User input a title or topic
@@ -85,12 +89,22 @@ def row_to_dict(df, title):
     row_data = df.loc[df['title'] == title]
     return row_data.to_dict(orient='records')[0] if not row_data.empty else None
 
+def search_excel(user_input):
+    df = pd.read_excel(xlsx_file_path)
+    search_cols = ['title', 'dc.abstract[en_US]']
+
+    # apply case-insensitive search and get boolean dataframe
+    mask = df[search_cols].apply(lambda x: x.str.contains(user_input, case=False)).any(axis=1)
+
+    # filter dataframe by mask and get titles list
+    titles_list = df.loc[mask, 'title'].tolist()
+
+    return titles_list
+
 
 def main():
     st.title("📖 Chat with One Paper")
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    xlsx_file_path = os.path.join(current_dir, 'r', 'merged_data02.xlsx')
-    txt_path =  os.path.join(current_dir, 'r', '1.txt')
+
 
     selected_option = []
     options = []
@@ -98,9 +112,10 @@ def main():
     if "text_input" not in st.session_state or st.session_state.text_input != text_input:
         st.session_state.text_input = text_input
         if text_input:
-            with st.spinner("Searching for papers..."):
-                res = qa(text_input)
-                options = get_titles_from_dict(res)
+            # with st.spinner("Searching for papers..."):
+                # res = qa(text_input)
+                # options = get_titles_from_dict(res)
+            options = search_excel(text_input)
             st.session_state.options = options
     else:
         if "options" in st.session_state:
