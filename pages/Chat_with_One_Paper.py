@@ -121,7 +121,7 @@ def main():
               st.session_state.dic = {}
               st.warning("No document found for the selected title. Please select a valid title.")
       else:
-          pass
+          st.write(len(selected_option))
     else:
         dic = st.session_state.dic
 
