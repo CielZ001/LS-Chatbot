@@ -18,10 +18,10 @@ import os
 # from dotenv import load_dotenv
 # load_dotenv()
 
-OPENAI_API_KEY = st.secrets['openai.api.key']
-pc_api_key = st.secrets['pc.api.key']
-pc_env = st.secrets['pc.env']
-pc_index = st.secrets['pc.index']
+OPENAI_API_KEY = st.secrets['openai-api-key']
+pc_api_key = st.secrets['pc-api-key']
+pc_env = st.secrets['pc-env']
+pc_index = st.secrets['pc-index']
 
 # OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
 # PINECONE_API_KEY = os.environ['pc_api_key']
