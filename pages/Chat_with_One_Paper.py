@@ -97,10 +97,10 @@ def main():
                 res = qa(text_input)
                 options = get_titles_from_dict(res)
             st.session_state.options = options
+            selected_option = st.selectbox("Select one:", options)
     else:
         if "options" in st.session_state:
           options = st.session_state.options
-          selected_option = st.selectbox("Select one:", options)
         else:
           st.warning("Please write a title or topic to start!")
 
