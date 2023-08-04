@@ -88,10 +88,10 @@ def main():
     txt_path =  os.path.join(current_dir, 'r', '1.txt')
 
     selected_option = []
+    options = []
     text_input = st.text_input("Write a title or topic to start:", value="")
     if "text_input" not in st.session_state or st.session_state.text_input != text_input:
         st.session_state.text_input = text_input
-        options = []
         if text_input:
             with st.spinner("Searching for papers..."):
                 res = qa(text_input)
