@@ -99,11 +99,11 @@ def main():
     else:
         if "options" in st.session_state:
           options = st.session_state.options
+          selected_option = st.selectbox("Select one:", options)
         else:
           st.warning("Please write a title or topic to start!")
 
-    selected_option = st.selectbox("Select one:", options)
-
+    
     if "selected_option" not in st.session_state or st.session_state.selected_option != selected_option:
         st.session_state.selected_option = selected_option
         # Load the document if the selected option changes
