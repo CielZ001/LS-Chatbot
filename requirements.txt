@@ -1,0 +1,10 @@
+streamlit
+openai
+streamlit_chat
+langchain
+openai
+tiktoken
+pinecone-client
+faiss-cpu
+pypdf
+openpyxl
