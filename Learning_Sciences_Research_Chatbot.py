@@ -108,8 +108,9 @@ def print_answer_citations_sources(result):
 
     return output_answer
 
-current_dir = os.path.dirname(os.path.abspath(__file__))
-json_file_path = os.path.join(current_dir, 'convo_history.json')
+# current_dir = os.path.dirname(os.path.abspath(__file__))
+# json_file_path = os.path.join(current_dir, 'convo_history.json')
+json_file_path = 'convo_history.json'
 
 def get_convo():
     with open(json_file_path, 'r', encoding='utf-8') as f:
