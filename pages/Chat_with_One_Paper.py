@@ -106,7 +106,7 @@ def main():
 
     
     if "selected_option" not in st.session_state or st.session_state.selected_option != selected_option:
-      if len(selected_option) == 1:
+      if len(selected_option) != 0:
           st.session_state.selected_option = selected_option
           # Load the document if the selected option changes
           df = pd.read_excel(xlsx_file_path)
@@ -121,7 +121,7 @@ def main():
               st.session_state.dic = {}
               st.warning("No document found for the selected title. Please select a valid title.")
       else:
-          st.write(len(selected_option))
+          pass
     else:
         dic = st.session_state.dic
 
