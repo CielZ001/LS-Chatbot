@@ -97,7 +97,10 @@ def main():
                 options = get_titles_from_dict(res)
             st.session_state.options = options
     else:
-        options = st.session_state.options
+        if "options" in st.session_state:
+          options = st.session_state.options
+        else:
+          st.warning("Please write a title or topic to start!")
 
     selected_option = st.selectbox("Select one:", options)
 
