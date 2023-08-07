@@ -56,8 +56,10 @@ if "messages" not in st.session_state:
 for msg in st.session_state.messages:
     st.chat_message(msg.role).write(msg.content)
 
-memory = ConversationSummaryBufferMemory(llm=OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY), max_token_limit=150,
-                                         memory_key='chat_history', return_messages=True, output_key='answer')
+memory = ConversationSummaryBufferMemory(llm=OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY), max_token_limit=150, memory_key='chat_history', \
+                                         return_messages=True, output_key='answer')
+# memory = ConversationSummaryBufferMemory(llm=OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY), max_token_limit=150,
+#                                          memory_key='chat_history', return_messages=True, output_key='answer')
 
 
 if 'buffer_memory' not in st.session_state:
@@ -130,7 +132,7 @@ def store_convo(prompt, answers, citations):
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
-prompt_template = """Always use following pieces of context to answer the question at the end. You should construct your answer only based on information provided in the context. If you don't know the answer, don't try to make up an answer, just say the exact following "Sorry, I didn't find direct answer to your question. But here are some resources that may be helpful.".
+prompt_template = """Use the following pieces of context to answer the question at the end. You should construct your answer only based on information provided in the context. If you don't know the answer, don't try to make up an answer, just say the exact following "Sorry, I didn't find direct answer to your question. But here are some resources that may be helpful.".
 
 {context}
 
@@ -140,6 +142,9 @@ QA_PROMPT_revised = PromptTemplate(
     template=prompt_template, input_variables=["context", "question"]
 )
 
+retriever = vectorstore.as_retriever(
+    search_type="similarity",
+    search_kwargs={"k": 3, "include_metadata": True})
 
 if prompt := st.chat_input("Ask anything about learning sciences research!"):
     st.session_state.messages.append(ChatMessage(role="user", content=prompt))
@@ -147,10 +152,15 @@ if prompt := st.chat_input("Ask anything about learning sciences research!"):
 
     with st.chat_message("assistant"):
         stream_handler = StreamHandler(st.empty())
-        qa = ConversationalRetrievalChain.from_llm(ChatOpenAI(temperature=0, openai_api_key=OPENAI_API_KEY, streaming=True, callbacks=[stream_handler]), 
-                                                   vectorstore.as_retriever(), memory=st.session_state.buffer_memory,
-                                                   combine_docs_chain_kwargs={'prompt': QA_PROMPT_revised},
-                                                   return_source_documents=True)
+        qa = ConversationalRetrievalChain.from_llm(llm=ChatOpenAI(model="gpt-4", temperature=0, openai_api_key=OPENAI_API_KEY), 
+                                                   retriever=retriever, chain_type="stuff",
+                                                   combine_docs_chain_kwargs={'prompt': QA_PROMPT_revised}, memory = memory,
+                                                   verbose=True, return_source_documents=True)
+        # qa = ConversationalRetrievalChain.from_llm(ChatOpenAI(temperature=0, openai_api_key=OPENAI_API_KEY, streaming=True, callbacks=[stream_handler]), 
+        #                                            vectorstore.as_retriever(), 
+        #                                            memory=st.session_state.buffer_memory,
+        #                                            combine_docs_chain_kwargs={'prompt': QA_PROMPT_revised},
+        #                                            return_source_documents=True)
         with st.spinner("searching through learning sciences research papers and preparing citations..."):
             res = qa({"question": st.session_state.messages[-1].content})
             citations = print_citations(res)
