@@ -156,7 +156,7 @@ if prompt := st.chat_input("Ask anything about learning sciences research!"):
             search_type="similarity",
             search_kwargs={"k": 3})
         
-        qa = ConversationalRetrievalChain.from_llm(llm=ChatOpenAI(model="gpt-4", temperature=0, openai_api_key=OPENAI_API_KEY), 
+        qa = ConversationalRetrievalChain.from_llm(llm=ChatOpenAI(model="gpt-4", temperature=0, openai_api_key=OPENAI_API_KEY, streaming=True, callbacks=[stream_handler]), 
                                                    retriever=retriever, chain_type="stuff",
                                                    combine_docs_chain_kwargs={'prompt': QA_PROMPT_revised}, memory = memory,
                                                    verbose=True, return_source_documents=True)
