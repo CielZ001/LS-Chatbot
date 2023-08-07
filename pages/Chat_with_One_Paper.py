@@ -23,8 +23,8 @@ txt_path =  os.path.join(current_dir, 'r', '1.txt')
 # Logic of this code:
 #
 # 1. User input a title or topic
-# 2. Search for the paper using a conversational retrieval chain, to return a list of papers titles and it's metadata,
-#    return the top 10 results, remove duplicates, and display the list of titles in a selectbox
+# 2. Search for the paper in title and abstract, to return a list of papers titles.
+#    return the all matched results, remove duplicates, and display the list of titles in a selectbox
 # 3. User select a paper title
 # 4. Use the selected title to search for the paper in all-paper CSV file, return the paper's author, uri, title
 #    and whole text to a list.
@@ -43,35 +43,6 @@ pc_index = st.secrets['pc-index']
 # PINECONE_ENVIRONMENT = os.environ['pc_env']
 # index_name = os.environ['pc_index']
 
-# model_name = 'text-embedding-ada-002'
-
-# pinecone.init(api_key=pc_api_key, environment=pc_env)
-# index = pinecone.Index(pc_index)
-
-# embed = OpenAIEmbeddings(model=model_name, openai_api_key=OPENAI_API_KEY)
-# vectorstore = Pinecone(index, embed.embed_query, "text")
-
-# CONDENSE_PROMPT = """Given the following conversation and a follow up question, print out the follow up question.
-
-# Chat History:
-# {chat_history}
-# Follow Up Input: {question}
-# Follow up question:"""
-
-# CONDENSEprompt = PromptTemplate(input_variables=["chat_history", "question"], template=CONDENSE_PROMPT)
-# memory1 = ConversationSummaryBufferMemory(llm=OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY),
-#                                           max_token_limit=150,
-#                                           memory_key='chat_history',
-#                                           return_messages=True,
-#                                           output_key='answer')
-# qa = ConversationalRetrievalChain.from_llm(OpenAI(temperature=0, openai_api_key=OPENAI_API_KEY),
-#                                            vectorstore.as_retriever(search_kwargs={"k": 5}),
-#                                            chain_type="stuff",
-#                                            memory=memory1,
-#                                            condense_question_prompt=CONDENSEprompt,
-#                                            verbose=True,
-#                                            return_source_documents=True)
-
 
 class DocumentInput(BaseModel):
     question: str = Field()
@@ -79,11 +50,6 @@ class DocumentInput(BaseModel):
 
 def remove_duplicates(input_list):
     return list(set(input_list))
-
-
-# def get_titles_from_dict(result):
-#     return remove_duplicates([doc.metadata.get('title') for doc in result['source_documents']])
-
 
 def row_to_dict(df, title):
     row_data = df.loc[df['title'] == title]
@@ -105,16 +71,12 @@ def search_excel(user_input):
 def main():
     st.title("📖 Chat with One Paper")
 
-
     selected_option = []
     options = []
     text_input = st.text_input("Write a title or topic to start:", value="")
     if "text_input" not in st.session_state or st.session_state.text_input != text_input:
         st.session_state.text_input = text_input
         if text_input:
-            # with st.spinner("Searching for papers..."):
-                # res = qa(text_input)
-                # options = get_titles_from_dict(res)
             d_removed = search_excel(text_input)
             options = remove_duplicates(d_removed)
             st.session_state.options = options
@@ -149,7 +111,6 @@ def main():
 
     loader = TextLoader(txt_path)
     documents = loader.load()
-
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=0, separators=[" ", ",", "\n"])
     docs = text_splitter.split_documents(documents)
 
@@ -158,12 +119,10 @@ def main():
         embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
         if embeddings:
             FAretriever = FAISS.from_documents(docs, embeddings)
-
             rqa = RetrievalQA.from_chain_type(llm=ChatOpenAI(temperature=0, openai_api_key=OPENAI_API_KEY),
                                               chain_type="stuff",
                                               retriever=FAretriever.as_retriever(search_kwargs={"k": 5}),
                                               verbose=True, )
-
             text_input2 = st.text_input("""What do you want to know about this paper?
             
 Tips: Please be as precise as possible. For example, instead of using 'author', you should say 'authors of this paper'.""",
@@ -175,14 +134,10 @@ Tips: Please be as precise as possible. For example, instead of using 'author', 
                         outp = rqa(text_input2)
                         st.markdown("#### Answer:")
                         st.write(outp["result"])
-                        # st.markdown(outp["result"])
         else:
             st.warning("Failed to generate embeddings.")
     else:
         st.warning("No valid documents to generate response.")
-
-    # embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
-    # FAretriever = FAISS.from_documents(docs, embeddings)
 
 
 if __name__ == "__main__":
