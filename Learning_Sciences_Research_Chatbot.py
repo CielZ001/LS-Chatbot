@@ -154,7 +154,7 @@ if prompt := st.chat_input("Ask anything about learning sciences research!"):
         stream_handler = StreamHandler(st.empty())
         retriever = vectorstore.as_retriever(
             search_type="similarity",
-            search_kwargs={"k": 3, "include_metadata": True})
+            search_kwargs={"k": 3})
         qa = ConversationalRetrievalChain.from_llm(llm=ChatOpenAI(model="gpt-4", temperature=0, openai_api_key=OPENAI_API_KEY), 
                                                    retriever=retriever, chain_type="stuff",
                                                    combine_docs_chain_kwargs={'prompt': QA_PROMPT_revised}, memory = memory,
