@@ -144,7 +144,7 @@ QA_PROMPT_revised = PromptTemplate(
 
 retriever = vectorstore.as_retriever(
     search_type="similarity",
-    search_kwargs={"k": 3, "include_metadata": True})
+    search_kwargs={"k": 3})
 
 if prompt := st.chat_input("Ask anything about learning sciences research!"):
     st.session_state.messages.append(ChatMessage(role="user", content=prompt))
