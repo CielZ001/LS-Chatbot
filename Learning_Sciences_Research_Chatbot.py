@@ -142,9 +142,9 @@ QA_PROMPT_revised = PromptTemplate(
     template=prompt_template, input_variables=["context", "question"]
 )
 
-retriever = vectorstore.as_retriever(
-    search_type="similarity",
-    search_kwargs={"k": 3})
+# retriever = vectorstore.as_retriever(
+#     search_type="similarity",
+#     search_kwargs={"k": 3})
 
 if prompt := st.chat_input("Ask anything about learning sciences research!"):
     st.session_state.messages.append(ChatMessage(role="user", content=prompt))
@@ -153,7 +153,7 @@ if prompt := st.chat_input("Ask anything about learning sciences research!"):
     with st.chat_message("assistant"):
         stream_handler = StreamHandler(st.empty())
         qa = ConversationalRetrievalChain.from_llm(llm=ChatOpenAI(model="gpt-4", temperature=0, openai_api_key=OPENAI_API_KEY), 
-                                                   retriever=retriever, chain_type="stuff",
+                                                   retriever=vectorstore.as_retriever(search_kwargs={"k": 3}), chain_type="stuff",
                                                    combine_docs_chain_kwargs={'prompt': QA_PROMPT_revised}, memory = memory,
                                                    verbose=True, return_source_documents=True)
         # qa = ConversationalRetrievalChain.from_llm(ChatOpenAI(temperature=0, openai_api_key=OPENAI_API_KEY, streaming=True, callbacks=[stream_handler]), 
