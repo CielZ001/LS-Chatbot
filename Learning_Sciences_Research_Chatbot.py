@@ -15,6 +15,7 @@ import time
 from langchain import PromptTemplate
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 import os
+from langchain.callbacks import StreamlitCallbackHandler
 # from dotenv import load_dotenv
 # load_dotenv()
 
@@ -151,12 +152,13 @@ if prompt := st.chat_input("Ask anything about learning sciences research!"):
     st.chat_message("user").write(prompt)
 
     with st.chat_message("assistant"):
-        stream_handler = StreamHandler(st.empty())
+        # stream_handler = StreamHandler(st.empty())
+        st_callback = StreamlitCallbackHandler(st.container())
         retriever = vectorstore.as_retriever(
             search_type="similarity",
             search_kwargs={"k": 3})
         
-        qa = ConversationalRetrievalChain.from_llm(llm=ChatOpenAI(model="gpt-4", temperature=0, openai_api_key=OPENAI_API_KEY, streaming=True, callbacks=[stream_handler]), 
+        qa = ConversationalRetrievalChain.from_llm(llm=ChatOpenAI(model="gpt-4", temperature=0, openai_api_key=OPENAI_API_KEY, streaming=True, callbacks=[st_callback]), 
                                                    retriever=retriever, chain_type="stuff",
                                                    combine_docs_chain_kwargs={'prompt': QA_PROMPT_revised}, memory = memory,
                                                    verbose=True, return_source_documents=True)
